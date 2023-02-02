@@ -230,7 +230,9 @@ class TranslationDataset(Dataset):
                     batches_to_evict = 8 * ((num_examples_to_split - 1) // 8)
 
                     if batches_to_evict == 0:
-                        batches_to_evict = num_examples_to_split
+                        # we have 8 or fewer sentences left in this batch.
+                        # Try to split it in half but at least one.
+                        batches_to_evict = max(num_examples_to_split // 2, 1)
 
                     batches.append(batches[num_batches][batches_to_evict:])
                     batches[num_batches] = batches[num_batches][:batches_to_evict]
