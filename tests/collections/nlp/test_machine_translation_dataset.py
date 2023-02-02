@@ -2,12 +2,12 @@ from nemo.collections.nlp.data import TranslationDataset
 
 
 def test_pack_data_into_batches():
-    tokens_in_batch = 17
+    tokens_in_batch = 8192
     dataset = TranslationDataset("", "", tokens_in_batch=tokens_in_batch)
     dataset.src_pad_id = 0
     dataset.tgt_pad_id = 0
-    src = [[1, 2, 3]] * 9
-    tgt = [[1, 2, 3]] * 9
+    src = [[1 for _ in range(4096)]] * 2
+    tgt = [[1 for _ in range(4096)]] * 2
     batches = dataset.pack_data_into_batches(src, tgt)
     padded_batch = dataset.pad_batches(src, tgt, batches)
     for i, batch in padded_batch.items():
