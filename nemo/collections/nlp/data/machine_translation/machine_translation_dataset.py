@@ -227,9 +227,9 @@ class TranslationDataset(Dataset):
                 if batch_size * (src_len + tgt_len) > self.tokens_in_batch:
 
                     num_examples_to_split = len(batches[num_batches])
-                    batches_to_keep = 8 * ((num_examples_to_split - 1) // 8)
+                    num_examples_to_keep = 8 * ((num_examples_to_split - 1) // 8)
 
-                    if batches_to_keep == 0:
+                    if num_examples_to_keep == 0:
                         # we have 8 or fewer sentences left in this batch.
                         # Try to evict the last segment only.
                         # Edge case: a single sentence is longer than the batch
@@ -237,11 +237,11 @@ class TranslationDataset(Dataset):
                         if num_examples_to_split == 1:
                             logging.warning(f"sentence {idx} is longer than the batch size. Consider 'clean = True' "
                                             f"({src_len =} + {tgt_len = } = {src_len + tgt_len} > {self.tokens_in_batch})")
-                        batches_to_keep = max(num_examples_to_split - 1, 1)
+                        num_examples_to_keep = max(num_examples_to_split - 1, 1)
 
-                    batches.append(batches[num_batches][batches_to_keep:])
-                    batches[num_batches] = batches[num_batches][:batches_to_keep]
-                    batch_size = num_examples_to_split - batches_to_keep
+                    batches.append(batches[num_batches][num_examples_to_keep:])
+                    batches[num_batches] = batches[num_batches][:num_examples_to_keep]
+                    batch_size = num_examples_to_split - num_examples_to_keep
 
                     num_batches += 1
                     if batch_size > 0:
